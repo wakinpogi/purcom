@@ -1,0 +1,557 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Madilim na Langit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout concept: a night-sky scroll. Full starfield hero, then a sky-dimmer instrument (Bortle scale),
+   fact cards, a Philippine city strip, action list, and a pledge that "switches a light off". */
+:root {
+  --bg: #060a17;
+  --surface: #0d1530;
+  --surface-2: #121c3e;
+  --line: #1f2c57;
+  --fg: #e9edf9;
+  --muted: #9ba8cc;
+  --cyan: #5ee7ff;
+  --star: #fff3c4;
+  --warn: #ffd166;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--cyan); }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+.wrap { width: 100%; max-width: 1080px; margin-inline: auto; padding-inline: 20px; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.08; text-wrap: balance; margin: 0; letter-spacing: -0.02em; }
+p { margin: 0; }
+.eyebrow { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cyan); }
+
+/* nav */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--fg); text-decoration: none; letter-spacing: -0.01em; }
+.brand span { color: var(--star); }
+.nav ul { display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; }
+.nav ul a { color: var(--muted); text-decoration: none; font-size: 14.5px; font-weight: 500; }
+.nav ul a:hover { color: var(--fg); }
+@media (max-width: 720px) { .nav ul { display: none; } }
+
+/* hero */
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero::after { content: ""; position: absolute; inset: auto 0 0 0; height: 55%; background: radial-gradient(120% 100% at 50% 130%, rgba(255,214,140,0.30), rgba(255,170,80,0.10) 45%, transparent 70%); pointer-events: none; }
+.hero .wrap { position: relative; z-index: 2; padding-block: 96px 120px; }
+.hero h1 { font-size: clamp(2.5rem, 7.4vw, 5.4rem); font-weight: 800; max-width: 15ch; }
+.hero h1 em { font-style: normal; color: var(--star); text-shadow: 0 0 28px rgba(255,243,196,0.45); }
+.hero .sub { margin-top: 24px; max-width: 54ch; color: #c6cfea; font-size: clamp(1.02rem, 2.2vw, 1.2rem); }
+.cta-row { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 14px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 16px; padding: 14px 24px; border-radius: 999px; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .2s, box-shadow .2s, background .2s; }
+.btn-primary { background: var(--cyan); color: #04121a; box-shadow: 0 0 0 0 rgba(94,231,255,0.0), 0 8px 30px -8px rgba(94,231,255,0.6); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 24px 2px rgba(94,231,255,0.35); }
+.btn-ghost { color: var(--fg); border-color: var(--line); background: transparent; }
+.btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+.hero-meta { margin-top: 56px; font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); letter-spacing: 0.04em; max-width: 60ch; }
+
+/* sections */
+section { padding-block: 88px; }
+.sec-head { display: grid; gap: 14px; margin-bottom: 40px; max-width: 62ch; }
+.sec-head h2 { font-size: clamp(1.9rem, 4.6vw, 3rem); font-weight: 700; }
+.sec-head p { color: var(--muted); }
+
+/* sky dimmer */
+.dimmer { border: 1px solid var(--line); border-radius: 20px; background: var(--surface); overflow: hidden; }
+.dimmer canvas { display: block; width: 100%; height: 280px; background: #04070f; }
+.dimmer-body { padding: 24px; display: grid; gap: 20px; }
+.dimmer-top { display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: baseline; justify-content: space-between; }
+.bortle { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+.bortle small { font-family: var(--font-mono); font-weight: 400; font-size: 12.5px; color: var(--muted); letter-spacing: .05em; margin-left: 8px; }
+.stat-row { display: flex; flex-wrap: wrap; gap: 8px 28px; font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.stat-row b { color: var(--star); font-weight: 500; font-variant-numeric: tabular-nums; }
+input[type=range] { width: 100%; accent-color: var(--cyan); height: 28px; }
+.scale-labels { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); letter-spacing: .04em; }
+.scale-note { color: #c0c9e6; font-size: 15.5px; min-height: 3.2em; }
+
+/* cards */
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 900px) { .grid-3 { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 28px; display: grid; gap: 14px; align-content: start; transition: border-color .25s, transform .25s; }
+.card:hover { border-color: #34508f; transform: translateY(-3px); }
+.card .tag { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--warn); }
+.card h3 { font-size: 1.4rem; font-weight: 700; }
+.card p { color: #c0c9e6; font-size: 16px; }
+.card .fact { margin-top: 4px; padding-top: 14px; border-top: 1px dashed var(--line); font-size: 14.5px; color: var(--muted); }
+.card .fact b { color: var(--fg); font-weight: 600; }
+.glyph { width: 44px; height: 44px; }
+
+/* context strip */
+.context { background: linear-gradient(180deg, var(--bg), #0a1129 40%, var(--bg)); border-block: 1px solid var(--line); }
+.ctx-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: start; }
+@media (max-width: 860px) { .ctx-grid { grid-template-columns: 1fr; } }
+.ctx-copy { display: grid; gap: 18px; color: #c0c9e6; }
+.ctx-copy strong { color: var(--fg); font-weight: 600; }
+.cities { display: grid; gap: 12px; }
+.city { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.city h3 { font-size: 1.1rem; font-weight: 700; }
+.city span.glow { font-family: var(--font-mono); font-size: 12px; color: var(--muted); letter-spacing: .06em; }
+.city .bar { grid-column: 1 / -1; height: 8px; border-radius: 99px; background: #0a1026; overflow: hidden; }
+.city .bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--cyan), var(--star), var(--warn)); }
+.city p { grid-column: 1 / -1; font-size: 14.5px; color: var(--muted); }
+.cities-note { font-size: 13px; color: var(--muted); font-family: var(--font-mono); }
+
+/* actions */
+.actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 760px) { .actions { grid-template-columns: 1fr; } }
+.action { display: grid; grid-template-columns: auto 1fr; gap: 16px; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.action .ico { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-2); color: var(--star); }
+.action h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; }
+.action p { color: #b8c2e2; font-size: 15.5px; }
+.kelvin { margin-top: 10px; display: inline-flex; gap: 8px; align-items: center; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.kelvin i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+
+/* pledge */
+.pledge { background: radial-gradient(80% 120% at 50% 0%, #12214a, var(--bg) 70%); border-top: 1px solid var(--line); }
+.pledge-box { max-width: 720px; margin-inline: auto; border: 1px solid #2b3d78; border-radius: 24px; padding: clamp(24px, 5vw, 44px); background: color-mix(in srgb, var(--surface) 88%, transparent); display: grid; gap: 22px; }
+.pledge-box h2 { font-size: clamp(1.8rem, 4.6vw, 2.7rem); }
+.pledge-text { color: #c6cfea; }
+.pledge-text b { color: var(--star); font-weight: 600; }
+.field { display: grid; gap: 8px; }
+.field label { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.field-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.field input[type=text] { flex: 1 1 240px; min-width: 0; font: inherit; color: var(--fg); background: #070d22; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.field input[type=text]::placeholder { color: #5f6c96; }
+.field input[type=text]:focus { border-color: var(--cyan); outline: none; box-shadow: 0 0 0 3px rgba(94,231,255,0.18); }
+.checks { display: grid; gap: 10px; }
+.checks label { display: flex; gap: 12px; align-items: flex-start; font-size: 15.5px; color: #c0c9e6; cursor: pointer; }
+.checks input { margin-top: 5px; accent-color: var(--cyan); width: 16px; height: 16px; flex: none; }
+.err { color: var(--warn); font-size: 14.5px; min-height: 1.2em; }
+.success { display: grid; gap: 10px; border: 1px solid #2a5a68; background: rgba(94,231,255,0.07); border-radius: 16px; padding: 20px; }
+.success h3 { font-size: 1.3rem; color: var(--cyan); }
+.counter { display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; padding-top: 18px; border-top: 1px solid var(--line); }
+.counter .num { font-family: var(--font-display); font-size: 2.6rem; font-weight: 800; color: var(--star); font-variant-numeric: tabular-nums; text-shadow: 0 0 24px rgba(255,243,196,0.35); }
+.counter .lbl { color: var(--muted); font-size: 14.5px; }
+.board { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.board li { font-size: 14px; padding: 6px 12px; border-radius: 99px; border: 1px solid var(--line); background: #0a1229; color: #c6cfea; display: inline-flex; align-items: center; gap: 8px; overflow-wrap: anywhere; }
+.board li::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--star); box-shadow: 0 0 8px var(--star); flex: none; }
+.local-note { font-size: 13px; color: var(--muted); font-family: var(--font-mono); }
+
+footer { border-top: 1px solid var(--line); padding-block: 36px; color: var(--muted); font-size: 14px; }
+footer .wrap { display: grid; gap: 10px; }
+footer a { color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+</style>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">Madilim na <span>Langit</span></a>
+    <nav aria-label="Sections">
+      <ul>
+        <li><a href="#sky">The sky</a></li>
+        <li><a href="#truth">Hidden truth</a></li>
+        <li><a href="#ph">Philippines</a></li>
+        <li><a href="#act">Act</a></li>
+        <li><a href="#pledge">Pledge</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <canvas id="heroSky" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <p class="eyebrow">Light pollution &middot; Philippines</p>
+      <h1 style="margin-top:18px">The Stars We&rsquo;re <em>Losing</em></h1>
+      <p style="font-family:var(--font-display);font-weight:600;font-size:clamp(1.2rem,3vw,1.7rem);margin-top:12px;color:#dfe5f7;letter-spacing:-0.01em">Light pollution in the Philippines</p>
+      <p class="sub">Urban glow is washing out our night skies. It hides the Milky Way from the people who live beneath it, and it throws off the animals that depend on darkness to feed, breed and find their way home.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#pledge">Join the Movement</a>
+        <a class="btn btn-ghost" href="#sky">Learn more</a>
+      </div>
+      <p class="hero-meta">Move your pointer across the sky. The stars you can see tonight depend on how much light we waste.</p>
+    </div>
+  </div>
+
+  <section id="sky">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">See it for yourself</p>
+        <h2>Dim the sky, one Bortle class at a time</h2>
+        <p>Astronomers rate sky darkness on the Bortle scale, from 1 (pristine) to 9 (inner city). Drag the slider and watch the same patch of sky lose its stars.</p>
+      </div>
+      <div class="dimmer">
+        <canvas id="dimCanvas" aria-label="Simulated night sky that loses stars as the Bortle class increases" role="img"></canvas>
+        <div class="dimmer-body">
+          <div class="dimmer-top">
+            <div class="bortle" id="bClass">Bortle 1<small id="bName">Excellent dark site</small></div>
+            <div class="stat-row">
+              <span>Faintest star: mag <b id="bMag">7.6</b></span>
+              <span>Stars in this frame: <b id="bCount">0</b></span>
+            </div>
+          </div>
+          <div>
+            <label for="bSlider" style="position:absolute;left:-9999px">Bortle class</label>
+            <input type="range" id="bSlider" min="1" max="9" step="1" value="1">
+            <div class="scale-labels"><span>1 &middot; Pristine</span><span>5 &middot; Suburban</span><span>9 &middot; Inner city</span></div>
+          </div>
+          <p class="scale-note" id="bNote"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="truth" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">The hidden truth</p>
+        <h2>The damage goes far beyond a washed-out view</h2>
+        <p>Artificial light at night reaches into ecosystems, culture and the power bill. Three things most people never hear about.</p>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <svg class="glyph" viewBox="0 0 44 44" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 30c6-10 14-14 24-12 4 1 7 4 8 8-6-2-10 0-14 4-6 5-14 3-18 0z"/><circle cx="31" cy="23" r="1.4" fill="var(--cyan)"/><path d="M8 11l4 3M17 7l1 5M26 8l-2 4"/></svg>
+          <span class="tag">Wildlife</span>
+          <h3>The disoriented</h3>
+          <p>Nocturnal animals lose their cues when cities never go dark. Birds that migrate by night can be drawn off course toward bright buildings. Sea turtle hatchlings crawl toward the brightest horizon, which should be the moonlit sea, and end up on roads and in parking lots instead.</p>
+          <p class="fact"><b>Why the Philippines matters:</b> the archipelago sits along the East Asian&ndash;Australasian Flyway, a route used by millions of migratory birds, and its beaches host nesting sea turtles.</p>
+        </article>
+        <article class="card">
+          <svg class="glyph" viewBox="0 0 44 44" fill="none" stroke="var(--star)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="22" cy="22" r="15"/><path d="M22 7v6M22 31v6M7 22h6M31 22h6"/><path d="M22 22l6-9" /><circle cx="22" cy="22" r="1.8" fill="var(--star)"/></svg>
+          <span class="tag">Heritage</span>
+          <h3>Lost star-maps</h3>
+          <p>Long before GPS, communities across the islands read the sky. Navigators steered by stars, and farmers watched certain groups, such as the Pleiades and the belt of Orion, to time planting and harvest. Those traditions need a dark sky to be seen and passed on.</p>
+          <p class="fact"><b>The risk:</b> when children can no longer find these stars, the names, stories and knowledge attached to them fade within a generation.</p>
+        </article>
+        <article class="card">
+          <svg class="glyph" viewBox="0 0 44 44" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 6a11 11 0 0 0-6 20c1 1 2 3 2 5h8c0-2 1-4 2-5a11 11 0 0 0-6-20z"/><path d="M18 36h8M19.5 40h5"/></svg>
+          <span class="tag">Energy</span>
+          <h3>Power wasted upward</h3>
+          <p>A lot of commercial, signage and street lighting shines where nobody needs it: into the sky, into empty lots, and all night over closed shops. That light costs money to produce and adds to a city&rsquo;s carbon footprint without making anyone safer.</p>
+          <p class="fact"><b>The fix is cheap:</b> shielded fixtures, timers and dimming cut waste right away, and the savings show up on the next bill.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="ph" class="context">
+    <div class="wrap">
+      <div class="ctx-grid">
+        <div>
+          <div class="sec-head" style="margin-bottom:24px">
+            <p class="eyebrow">The Philippine context</p>
+            <h2>A country urbanizing faster than its lighting rules</h2>
+          </div>
+          <div class="ctx-copy">
+            <p>Metro Manila is one of the densest urban regions in the world, and its glow can be seen from far beyond the city edge. <strong>Cebu, Davao, Cagayan de Oro, Iloilo and Baguio</strong> are growing quickly too, with new malls, towers, billboards and highways that stay lit until dawn.</p>
+            <p>Globally, more than 80 percent of people already live under a light-polluted sky. In the Philippines, the Milky Way that once arched over every barrio is now a trip to the mountains or a remote island for many families.</p>
+            <p>There is still time. Dark skies remain across much of Palawan, the Cordillera and parts of Mindanao, and good lighting design can protect them as towns grow.</p>
+          </div>
+        </div>
+        <div class="cities" aria-label="Illustrative sky glow by area">
+          <div class="city">
+            <h3>Metro Manila</h3><span class="glow">Bortle 8&ndash;9</span>
+            <div class="bar"><i style="width:96%"></i></div>
+            <p>Only the brightest planets and a handful of stars survive the glow.</p>
+          </div>
+          <div class="city">
+            <h3>Cebu and Davao</h3><span class="glow">Bortle 7&ndash;8</span>
+            <div class="bar"><i style="width:82%"></i></div>
+            <p>Growing metro cores where the Milky Way is already gone from the center.</p>
+          </div>
+          <div class="city">
+            <h3>Provincial towns</h3><span class="glow">Bortle 4&ndash;6</span>
+            <div class="bar"><i style="width:52%"></i></div>
+            <p>Brighter every year as highways, plazas and resorts add lights.</p>
+          </div>
+          <div class="city">
+            <h3>Remote islands and highlands</h3><span class="glow">Bortle 2&ndash;3</span>
+            <div class="bar"><i style="width:20%"></i></div>
+            <p>The skies worth protecting before they are lost.</p>
+          </div>
+          <p class="cities-note">Bortle ranges here are broad, illustrative estimates, not measurements of specific sites.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="act">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">What we can do</p>
+        <h2>Small changes that bring the dark back</h2>
+        <p>You do not need to sit in the dark. You only need light that goes where it is useful, when it is useful.</p>
+      </div>
+      <div class="actions">
+        <div class="action">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg></div>
+          <div>
+            <h3>Use proper outdoor lighting</h3>
+            <p>Choose fully shielded fixtures that point down, and use only as many lumens as the job needs. Pick warm light, around 3000K or lower, which disturbs wildlife less than cold white.</p>
+            <span class="kelvin"><i style="background:#ffb061"></i>2200K &nbsp;<i style="background:#ffd9a0"></i>3000K &nbsp;<i style="background:#cfe3ff"></i>5000K+</span>
+          </div>
+        </div>
+        <div class="action">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18.4 6.6a9 9 0 1 1-12.8 0M12 2v10"/></svg></div>
+          <div>
+            <h3>Switch off unnecessary lights</h3>
+            <p>Turn off indoor lights in empty rooms, and close curtains at night so light stays inside. Put porch and garden lights on timers or motion sensors.</p>
+          </div>
+        </div>
+        <div class="action">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6"/></svg></div>
+          <div>
+            <h3>Talk to your barangay and building</h3>
+            <p>Ask your barangay, school, church and neighborhood association to review street, plaza and signage lighting. Many wasteful lights are there only because nobody asked.</p>
+          </div>
+        </div>
+        <div class="action">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.4 5 5.6.8-4 4 1 5.6L12 15.6 7 18.4l1-5.6-4-4 5.6-.8z"/></svg></div>
+          <div>
+            <h3>Support Dark Sky initiatives</h3>
+            <p>Join local astronomy clubs and community stargazing nights, back dark-sky efforts in your province, and share what you see. People protect what they have seen.</p>
+          </div>
+        </div>
+        <div class="action">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20c3-3 6-3 10 0s7 3 10 0M12 4v8M8 8l4-4 4 4"/></svg></div>
+          <div>
+            <h3>Protect nesting beaches</h3>
+            <p>If you live or stay near a nesting beach, keep lights off or shielded during nesting and hatching season and follow local pawikan guidelines.</p>
+          </div>
+        </div>
+        <div class="action">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div>
+            <h3>Set a lights-out hour</h3>
+            <p>Businesses can dim signs and facade lighting after closing. Households can pick a fixed hour for outdoor lights to go off. Consistency matters more than perfection.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pledge" class="pledge">
+    <div class="wrap">
+      <div class="pledge-box">
+        <p class="eyebrow">Make it personal</p>
+        <h2>Pledge to turn off the lights you don&rsquo;t need</h2>
+        <p class="pledge-text">Type your name to commit. Every light you switch off gives a little of the night back to the animals, the neighbors and the stars above you. <b>Salamat po.</b></p>
+
+        <form id="pledgeForm" novalidate>
+          <div class="field">
+            <label for="pledgeName">Your name</label>
+            <div class="field-row">
+              <input type="text" id="pledgeName" name="name" placeholder="e.g. Maria Santos" maxlength="40" autocomplete="name">
+              <button class="btn btn-primary" type="submit">I pledge</button>
+            </div>
+          </div>
+          <div class="checks" style="margin-top:18px" role="group" aria-label="Commitments">
+            <label><input type="checkbox" checked disabled> I will turn off lights in rooms and outdoor areas I am not using.</label>
+            <label><input type="checkbox" id="optShield" checked> I will use shielded, warm outdoor lighting where I can.</label>
+            <label><input type="checkbox" id="optShare"> I will ask one other person or my barangay to do the same.</label>
+          </div>
+          <p class="err" id="pledgeErr" role="alert" aria-live="polite"></p>
+        </form>
+
+        <div class="success" id="pledgeOk" hidden role="status">
+          <h3 id="okTitle">Lights off.</h3>
+          <p id="okText"></p>
+        </div>
+
+        <div class="counter">
+          <span class="num" id="pledgeCount">0</span>
+          <span class="lbl">pledges made on this device</span>
+        </div>
+        <ul class="board" id="board" aria-label="Pledges made on this device"></ul>
+        <p class="local-note">Pledges are saved only in this browser. Nothing is sent anywhere.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Madilim na Langit is an environmental awareness page about light pollution in the Philippines. Facts are general and simplified; Bortle ranges for places are illustrative.</p>
+    <p>To learn more, look for your local astronomy society, university physics or astronomy department, and conservation groups that protect nesting sea turtles and migratory birds.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* seeded random so the sky is the same every load */
+  function rng(seed) { var s = seed >>> 0; return function () { s = (s + 0x6D2B79F5) >>> 0; var t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+  /* ---------- hero starfield ---------- */
+  var hero = document.getElementById('heroSky');
+  var hctx = hero.getContext('2d');
+  var hstars = [], hw = 0, hh = 0, mouse = { x: 0.5, y: 0.3 };
+  function sizeHero() {
+    var r = hero.parentElement.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    hw = r.width; hh = r.height;
+    hero.width = hw * dpr; hero.height = hh * dpr;
+    hctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var rand = rng(7), n = Math.round(Math.min(260, hw * hh / 5000));
+    hstars = [];
+    for (var i = 0; i < n; i++) {
+      hstars.push({ x: rand(), y: Math.pow(rand(), 1.25) * 0.95, r: 0.4 + rand() * 1.4, p: rand() * 6.28, sp: 0.6 + rand() * 1.6, depth: 0.2 + rand() });
+    }
+  }
+  function drawHero(t) {
+    hctx.clearRect(0, 0, hw, hh);
+    var g = hctx.createLinearGradient(0, 0, 0, hh);
+    g.addColorStop(0, '#04060f'); g.addColorStop(0.6, '#0a1230'); g.addColorStop(1, '#1b1f3d');
+    hctx.fillStyle = g; hctx.fillRect(0, 0, hw, hh);
+    var ox = (mouse.x - 0.5) * 14, oy = (mouse.y - 0.5) * 8;
+    for (var i = 0; i < hstars.length; i++) {
+      var s = hstars[i];
+      var tw = reduce ? 0.85 : 0.6 + 0.4 * Math.sin(t / 1000 * s.sp + s.p);
+      var fade = 1 - s.y * 0.75; /* glow near the horizon hides stars */
+      hctx.globalAlpha = Math.max(0.05, tw * fade);
+      hctx.fillStyle = s.r > 1.4 ? '#fff3c4' : '#e8f1ff';
+      hctx.beginPath();
+      hctx.arc(s.x * hw + ox * s.depth, s.y * hh + oy * s.depth, s.r, 0, 6.2832);
+      hctx.fill();
+    }
+    hctx.globalAlpha = 1;
+    if (!reduce) requestAnimationFrame(drawHero);
+  }
+  window.addEventListener('resize', function () { sizeHero(); if (reduce) drawHero(0); });
+  hero.parentElement.addEventListener('pointermove', function (e) {
+    var r = hero.getBoundingClientRect();
+    mouse.x = (e.clientX - r.left) / r.width; mouse.y = (e.clientY - r.top) / r.height;
+    if (reduce) drawHero(0);
+  });
+  sizeHero();
+  if (reduce) drawHero(0); else requestAnimationFrame(drawHero);
+
+  /* ---------- Bortle sky dimmer ---------- */
+  var BORTLE = [
+    null,
+    { n: 'Excellent dark site', m: 7.6, note: 'The Milky Way casts faint shadows and the zodiacal light is easy to see. Almost no place near a Philippine city looks like this any more.' },
+    { n: 'Typical truly dark site', m: 7.1, note: 'The Milky Way is full of detail. A few remote islands and highland areas still reach this level.' },
+    { n: 'Rural sky', m: 6.6, note: 'Some glow on the horizon toward distant towns, but the Milky Way still stretches overhead with clear structure.' },
+    { n: 'Rural / suburban transition', m: 6.2, note: 'Light domes appear in several directions. The Milky Way is visible but loses its fine detail.' },
+    { n: 'Suburban sky', m: 5.8, note: 'The Milky Way shows only on good nights, and mostly overhead. This is a typical provincial town edge.' },
+    { n: 'Bright suburban sky', m: 5.3, note: 'The Milky Way is gone near the horizon and hard to find overhead. Clouds glow orange-gray.' },
+    { n: 'Suburban / urban transition', m: 4.8, note: 'The whole sky looks grayish. Many familiar constellations lose their fainter stars.' },
+    { n: 'City sky', m: 4.5, note: 'Only the main stars of the brightest constellations remain. This is the sky over most of Cebu or Davao city.' },
+    { n: 'Inner-city sky', m: 4.0, note: 'A few hundred stars at most are visible to the eye in the whole sky. In this frame, almost none are left. This is Metro Manila.' }
+  ];
+  var dim = document.getElementById('dimCanvas'), dctx = dim.getContext('2d');
+  var slider = document.getElementById('bSlider');
+  var dstars = [], dw = 0, dh = 0;
+  function makeDimStars() {
+    var rand = rng(2026), n = 1100;
+    dstars = [];
+    for (var i = 0; i < n; i++) {
+      var m = 8.0 * Math.sqrt(rand()); /* more faint stars than bright ones */
+      var x = rand(), y = rand();
+      /* denser band across the frame to suggest the Milky Way */
+      if (rand() < 0.35) { var u = rand(); x = u; y = 0.55 - 0.35 * u + (rand() - 0.5) * 0.28; }
+      dstars.push({ x: x, y: Math.max(0.01, Math.min(0.99, y)), m: m });
+    }
+  }
+  function sizeDim() {
+    var r = dim.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dw = r.width; dh = r.height;
+    dim.width = dw * dpr; dim.height = dh * dpr;
+    dctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function drawDim() {
+    var b = parseInt(slider.value, 10), info = BORTLE[b], lim = info.m;
+    dctx.clearRect(0, 0, dw, dh);
+    var glow = (b - 1) / 8;
+    var g = dctx.createLinearGradient(0, 0, 0, dh);
+    var topA = 0.02 + glow * 0.30, botA = 0.06 + glow * 0.70;
+    g.addColorStop(0, 'rgba(18,24,48,1)');
+    g.addColorStop(1, 'rgba(10,14,30,1)');
+    dctx.fillStyle = '#04070f'; dctx.fillRect(0, 0, dw, dh);
+    var count = 0;
+    for (var i = 0; i < dstars.length; i++) {
+      var s = dstars[i];
+      if (s.m > lim) continue;
+      count++;
+      var bright = Math.max(0.25, 1 - s.m / 8.2);
+      var rad = 0.45 + (8 - s.m) * 0.2;
+      dctx.globalAlpha = Math.min(1, 0.35 + bright);
+      dctx.fillStyle = s.m < 2.5 ? '#fff3c4' : '#e6efff';
+      dctx.beginPath(); dctx.arc(s.x * dw, s.y * dh, rad, 0, 6.2832); dctx.fill();
+    }
+    dctx.globalAlpha = 1;
+    /* skyglow drawn over stars so it washes them out */
+    var gl = dctx.createLinearGradient(0, 0, 0, dh);
+    gl.addColorStop(0, 'rgba(120,110,140,' + (topA * 0.9) + ')');
+    gl.addColorStop(0.55, 'rgba(210,150,90,' + (botA * 0.55) + ')');
+    gl.addColorStop(1, 'rgba(255,175,95,' + botA + ')');
+    dctx.fillStyle = gl; dctx.fillRect(0, 0, dw, dh);
+    /* horizon silhouette */
+    dctx.fillStyle = '#02040a';
+    dctx.beginPath(); dctx.moveTo(0, dh);
+    var rr = rng(11);
+    for (var x = 0; x <= dw; x += 14) dctx.lineTo(x, dh - 8 - rr() * 14 - (Math.sin(x / 90) + 1) * 7);
+    dctx.lineTo(dw, dh); dctx.closePath(); dctx.fill();
+
+    document.getElementById('bClass').firstChild.nodeValue = 'Bortle ' + b;
+    document.getElementById('bName').textContent = info.n;
+    document.getElementById('bMag').textContent = info.m.toFixed(1);
+    document.getElementById('bCount').textContent = count.toLocaleString('en-US');
+    document.getElementById('bNote').textContent = info.note;
+  }
+  makeDimStars(); sizeDim(); drawDim();
+  slider.addEventListener('input', drawDim);
+  window.addEventListener('resize', function () { sizeDim(); drawDim(); });
+
+  /* ---------- pledge ---------- */
+  var KEY = 'madilim-pledges-v1';
+  var pledges = [];
+  function load() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); if (Array.isArray(v)) pledges = v.filter(function (x) { return typeof x === 'string'; }).slice(-60); } catch (e) { pledges = []; } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(pledges)); } catch (e) {} }
+  var countEl = document.getElementById('pledgeCount'), board = document.getElementById('board');
+  function render() {
+    countEl.textContent = pledges.length;
+    board.innerHTML = '';
+    pledges.slice().reverse().forEach(function (n) {
+      var li = document.createElement('li'); li.textContent = n; board.appendChild(li);
+    });
+  }
+  function bump(el) {
+    if (reduce || !el.animate) return;
+    el.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)', textShadow: '0 0 40px rgba(255,243,196,.9)' }, { transform: 'scale(1)' }], { duration: 500, easing: 'ease-out' });
+  }
+  load(); render();
+  var form = document.getElementById('pledgeForm');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var input = document.getElementById('pledgeName'), err = document.getElementById('pledgeErr');
+    var name = input.value.replace(/\s+/g, ' ').trim();
+    if (name.length < 2) { err.textContent = 'Please type your name (at least 2 letters) to make your pledge.'; input.focus(); return; }
+    err.textContent = '';
+    pledges.push(name); save(); render(); bump(countEl);
+    var shield = document.getElementById('optShield').checked, share = document.getElementById('optShare').checked;
+    var parts = ['You have committed to turning off the lights you do not need'];
+    if (shield) parts.push('using shielded, warm outdoor lighting');
+    if (share) parts.push('asking someone else to join');
+    var text = parts.length === 1 ? parts[0] : parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1];
+    document.getElementById('okTitle').textContent = 'Salamat, ' + name + '. One more light is off.';
+    document.getElementById('okText').textContent = text + '. Tonight, step outside after the lights go out and look up.';
+    document.getElementById('pledgeOk').hidden = false;
+    input.value = '';
+  });
+})();
+</script>
+
+</body></html>
